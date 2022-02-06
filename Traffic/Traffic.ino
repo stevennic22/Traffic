@@ -114,7 +114,7 @@ void clientReply(BridgeClient &replyClient, String message) {
   replyClient.println(F("Status: 200"));
   replyClient.println(F("Content-type: application/json; charset=utf-8"));
   replyClient.println();
-  replyClient.println("{'message': '" + message + "'}");
+  replyClient.println("{\"message\": \"" + message + "\"}");
   replyClient.stop();
   replyClient.flush();
   
@@ -147,18 +147,18 @@ void clientRead(BridgeClient &passedClient, PTracker &currentProcess) {
     currentProcess.timeOut = 0UL;
 
   } else if (command.indexOf(F("rlgl")) > -1) {
-    clientReply(passedClient, F("Starting red light/green light."));
+    clientReply(passedClient, F("Displaying red light/green light."));
     lState(TURN_ON, Red);
     lState(TURN_OFF, Yel);
     lState(TURN_OFF, Gre);
     currentProcess.ID = 1;
 
   } else if (command.indexOf(F("traffic")) > -1 ) {
-    clientReply(passedClient, F("Starting traffic pattern."));
+    clientReply(passedClient, F("Displaying traffic pattern."));
     currentProcess.ID = 2;
 
   } else if (command.indexOf(F("random")) > -1 ) {
-    clientReply(passedClient, F("Starting random pattern."));
+    clientReply(passedClient, F("Displaying random pattern."));
     currentProcess.ID = 3;
 
   } else if (command.indexOf(F("flash")) > -1) {
