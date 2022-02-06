@@ -7,6 +7,17 @@
 #define TURN_OFF 2
 #define CHECK_STATE 3
 
+enum processID {
+  OFF,
+  RLGL,
+  TRAFFIC,
+  RANDOM,
+  FLASHR,
+  FLASHY,
+  FLASHG,
+  FLASHA
+};
+
 struct Light {
   int lPin;
   char descriptor[4];
@@ -19,6 +30,7 @@ Light Gre;
 
 struct PTracker {
   int ID = 0;
+  bool firstRun = false;
   unsigned long timeOut = 0UL;
 } curProcess;
 
@@ -80,7 +92,7 @@ int lState(int ChkOnOff, Light &data) {
       return(RETURN_NEG);
     case CHECK_STATE:
       //Check light state (LOW/HIGH)
-      //Console.println(F("State of " + String(data.descriptor) + ": " + String(digitalRead(data.lPin))));
+      //Console.println("State of " + String(data.descriptor) + ": " + String(digitalRead(data.lPin)));
       return(digitalRead(data.lPin));
     default:
       return(RETURN_NEG);
@@ -110,8 +122,8 @@ void onTooLong(Light &data) {
       Console.println("Setting time on for " + String(data.descriptor) + " (you heathen)");
       return;
     } else if ((curMillis - data.onTime) > 30000) {
+      Console.println(String(data.descriptor) + " on too long.");
       lState(TURN_OFF, data);
-      Console.println("On too long. Turning " + String(data.descriptor) + " light off");
       return;
     }
   }
@@ -124,7 +136,7 @@ void clientReply(BridgeClient &replyClient, String message) {
   replyClient.println("{\"message\": \"" + message + "\"}");
   replyClient.stop();
   replyClient.flush();
-  
+
   Console.println("{'message': '" + message + "'}");
 }
 
@@ -138,35 +150,29 @@ void clientRead(BridgeClient &passedClient, PTracker &currentProcess) {
   } else {
     currentProcess.timeOut = millis() + (timeToEnd * 60000UL); //minutes to milliseconds
   }
-  
 
-  if (command.indexOf(F("end")) > -1 || command.indexOf(F("stop")) > -1) {
-    clientReply(passedClient, F("Stopping all processes now."));
-    currentProcess.ID = 0;
+  if (command.indexOf(F("end")) > -1 || command.indexOf(F("stop")) > -1 || command.indexOf(F("off")) > -1) {
+    clientReply(passedClient, F("Stopping running process now."));
+    currentProcess.ID = OFF;
     currentProcess.timeOut = 0UL;
 
-  } else if (command.indexOf(F("off")) > -1) {
-    clientReply(passedClient, F("Stopping all processes and turning off the lights."));
-    lState(TURN_OFF, Red);
-    lState(TURN_OFF, Yel);
-    lState(TURN_OFF, Gre);
-    currentProcess.ID = 0;
-    currentProcess.timeOut = 0UL;
+    if (command.indexOf(F("off")) > -1) {
+      lState(TURN_OFF, Red);
+      lState(TURN_OFF, Yel);
+      lState(TURN_OFF, Gre);
+    }
 
   } else if (command.indexOf(F("rlgl")) > -1) {
-    clientReply(passedClient, F("Displaying red light/green light."));
-    lState(TURN_ON, Red);
-    lState(TURN_OFF, Yel);
-    lState(TURN_OFF, Gre);
-    currentProcess.ID = 1;
+    clientReply(passedClient, F("Playing red light/green light."));
+    currentProcess.ID = RLGL;
 
   } else if (command.indexOf(F("traffic")) > -1 ) {
     clientReply(passedClient, F("Displaying traffic pattern."));
-    currentProcess.ID = 2;
+    currentProcess.ID = TRAFFIC;
 
   } else if (command.indexOf(F("random")) > -1 ) {
     clientReply(passedClient, F("Displaying random pattern."));
-    currentProcess.ID = 3;
+    currentProcess.ID = RANDOM;
 
   } else if (command.indexOf(F("flash")) > -1) {
     if (command.length() > 5) {
@@ -174,47 +180,37 @@ void clientRead(BridgeClient &passedClient, PTracker &currentProcess) {
       switch(switchVal) {
         case 'r':
           clientReply(passedClient, F("Flashing Red."));
-          lState(TURN_OFF, Red);
-          lState(TURN_OFF, Yel);
-          lState(TURN_OFF, Gre);
-          currentProcess.ID = 4;
+          currentProcess.ID = FLASHR;
+          currentProcess.firstRun = true;
           break;
 
         case 'y':
           clientReply(passedClient, F("Flashing Yellow."));
-          lState(TURN_OFF, Yel);
-          lState(TURN_OFF, Red);
-          lState(TURN_OFF, Gre);
-          currentProcess.ID = 5;
+          currentProcess.ID = FLASHY;
+          currentProcess.firstRun = true;
           break;
 
         case 'g':
           clientReply(passedClient, "Flashing Green.");
-          lState(TURN_OFF, Gre);
-          lState(TURN_OFF, Red);
-          lState(TURN_OFF, Yel);
-          currentProcess.ID = 6;
+          currentProcess.ID = FLASHG;
+          currentProcess.firstRun = true;
           break;
 
         case 'a':
           clientReply(passedClient, F("Flashing all."));
-          lState(TURN_ON, Red);
-          lState(TURN_ON, Yel);
-          lState(TURN_ON, Gre);
-          currentProcess.ID = 7;
+          currentProcess.ID = FLASHA;
+          currentProcess.firstRun = true;
           break;
 
         default:
           clientReply(passedClient, F("Try flashr instead."));
-          break;
+        break;
 
       }
     } else {
       clientReply(passedClient, F("Flashing all."));
-      lState(TURN_ON, Red);
-      lState(TURN_ON, Yel);
-      lState(TURN_ON, Gre);
-      currentProcess.ID = 7;
+      currentProcess.ID = FLASHA;
+      currentProcess.firstRun = true;
     }
   } else {
     clientReply(passedClient, F("Unknown command. Please try again or try 'STOP' to stop any process."));
@@ -238,7 +234,7 @@ void loop() {
     curProcess.ID = 0;
     curProcess.timeOut = 0;
   }
-  
+
   if (statusCheck >= 1000) {
     onTooLong(Red);
     onTooLong(Yel);
@@ -249,7 +245,14 @@ void loop() {
   }
 
   switch(curProcess.ID) {
-    case 1:
+    case RLGL:
+      if (curProcess.firstRun) {
+        curProcess.firstRun = false;
+        lState(TURN_ON, Red);
+        lState(TURN_OFF, Yel);
+        lState(TURN_OFF, Gre);
+      }
+
       if (endTime == 0) {
         endTime = millis() + random(2000,6000);
 
@@ -269,7 +272,7 @@ void loop() {
       }
       break;
 
-    case 2:
+    case TRAFFIC:
       if (endTime == 0) {
         endTime = millis() + random(8000,16000);
 
@@ -291,7 +294,7 @@ void loop() {
       }
       break;
 
-    case 3:
+    case RANDOM:
       if (endTime == 0) {
         endTime = millis() + random(4000,16000);
 
@@ -301,7 +304,14 @@ void loop() {
       }
       break;
 
-    case 4:
+    case FLASHR:
+      if (curProcess.firstRun) {
+        curProcess.firstRun = false;
+        lState(TURN_OFF, Red);
+        lState(TURN_OFF, Yel);
+        lState(TURN_OFF, Gre);
+      }
+
       if (endTime == 0) {
         endTime = millis() + 2000;
         if (lState(CHECK_STATE, Red)) {
@@ -312,10 +322,17 @@ void loop() {
       }
       break;
 
-    case 5:
+    case FLASHY:
+      if (curProcess.firstRun) {
+        curProcess.firstRun = false;
+        lState(TURN_OFF, Red);
+        lState(TURN_OFF, Yel);
+        lState(TURN_OFF, Gre);
+      }
+
       if (endTime == 0) {
         endTime = millis() + 2000;
-        
+
         if (lState(CHECK_STATE, Yel)) {
           lState(TURN_ON, Yel);
         } else {
@@ -324,10 +341,17 @@ void loop() {
       }
       break;
 
-    case 6:
+    case FLASHG:
+      if (curProcess.firstRun) {
+        curProcess.firstRun = false;
+        lState(TURN_OFF, Red);
+        lState(TURN_OFF, Yel);
+        lState(TURN_OFF, Gre);
+      }
+
       if (endTime == 0) {
         endTime = millis() + 2000;
-        
+
         if (lState(CHECK_STATE, Gre)) {
           lState(TURN_ON, Gre);
         } else {
@@ -336,32 +360,40 @@ void loop() {
       }
       break;
 
-    case 7:
+    case FLASHA:
+      if (curProcess.firstRun) {
+        curProcess.firstRun = false;
+        lState(TURN_OFF, Red);
+        lState(TURN_OFF, Yel);
+        lState(TURN_OFF, Gre);
+      }
+
       if (endTime == 0) {
         endTime = millis() + 2000;
-        
+
         if (lState(CHECK_STATE, Red)) {
           lState(TURN_ON, Red);
         } else {
           lState(TURN_OFF, Red);
         }
-        
+
         if (lState(CHECK_STATE, Yel)) {
           lState(TURN_ON, Yel);
         } else {
           lState(TURN_OFF, Yel);
         }
-        
+
         if (lState(CHECK_STATE, Gre)) {
           lState(TURN_ON, Gre);
         } else {
           lState(TURN_OFF, Gre);
         }
       }
+
       break;
 
     case 0:
     default:
-      break;
+    break;
   }
 }
