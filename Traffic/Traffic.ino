@@ -22,10 +22,8 @@ struct PTracker {
   unsigned long timeOut = 0UL;
 } curProcess;
 
-int randRes = random(1,8);
 int lightsSwitched = 0;
 int statusCheck = 0;
-int lastLight = 0;
 unsigned long curMillis = 0UL;
 unsigned long endTime = 0UL;
 
@@ -86,6 +84,15 @@ int lState(int ChkOnOff, Light &data) {
       return(digitalRead(data.lPin));
     default:
       return(RETURN_NEG);
+  }
+}
+
+bool randLight() {
+  int randCheck = int(random(0,2));
+  if (randCheck > 0) {
+    return(true);
+  } else {
+    return(false);
   }
 }
 
@@ -288,53 +295,9 @@ void loop() {
       if (endTime == 0) {
         endTime = millis() + random(4000,16000);
 
-        if (lastLight == 0) {
-          lastLight = randRes;
-        } else if (lastLight == randRes) {
-          while (lastLight == randRes) {
-            randRes = random(1,8);
-          }
-          lastLight = randRes;
-        }
-
-        switch(randRes) {
-          case 1:
-            lState(TURN_ON, Red);
-            lState(TURN_OFF, Yel);
-            lState(TURN_OFF, Gre);
-            break;
-          case 2:
-            lState(TURN_ON, Yel);
-            lState(TURN_OFF, Red);
-            lState(TURN_OFF, Gre);
-            break;
-          case 3:
-            lState(TURN_ON, Gre);
-            lState(TURN_OFF, Red);
-            lState(TURN_OFF, Yel);
-            break;
-          case 4:
-            lState(TURN_ON, Red);
-            lState(TURN_ON, Yel);
-            lState(TURN_OFF, Gre);
-            break;
-          case 5:
-            lState(TURN_ON, Red);
-            lState(TURN_OFF, Yel);
-            lState(TURN_ON, Gre);
-            break;
-          case 6:
-            lState(TURN_OFF, Red);
-            lState(TURN_ON, Yel);
-            lState(TURN_ON, Gre);
-            break;
-          case 7:
-          default:
-            lState(TURN_ON, Red);
-            lState(TURN_ON, Yel);
-            lState(TURN_ON, Gre);
-            break;
-        }
+        lState(randLight()?TURN_ON:TURN_OFF, Red);
+        lState(randLight()?TURN_ON:TURN_OFF, Yel);
+        lState(randLight()?TURN_ON:TURN_OFF, Gre);
       }
       break;
 
