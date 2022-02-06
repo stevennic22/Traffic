@@ -81,14 +81,18 @@ int lState(int ChkOnOff, Light &data) {
   //Return -1 for all else aside from case 3 (state)
   switch(ChkOnOff) {
     case TURN_ON:
-      digitalWrite(data.lPin, LOW);
-      data.onTime = millis();
-      Console.println("Turning on  " + String(data.descriptor) + ": " + String(data.onTime));
+      if (digitalRead(data.lPin) > 0) {
+        digitalWrite(data.lPin, LOW);
+        data.onTime = millis();
+        Console.println("Turning on  " + String(data.descriptor) + ": " + String(data.onTime));
+      }
       return(RETURN_NEG);
     case TURN_OFF:
-      digitalWrite(data.lPin, HIGH);
-      data.onTime = 0;
-      Console.println("Turning off " + String(data.descriptor) + ": " + String(data.onTime));
+      if (digitalRead(data.lPin) < 1) {
+        digitalWrite(data.lPin, HIGH);
+        data.onTime = 0;
+        Console.println("Turning off " + String(data.descriptor) + ": " + String(data.onTime));
+      }
       return(RETURN_NEG);
     case CHECK_STATE:
       //Check light state (LOW/HIGH)
