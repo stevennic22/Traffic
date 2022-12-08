@@ -1,6 +1,6 @@
 # Traffic
-### A wi-fi connected red light/green light game.
-> A simple traffic light script for [Arduino Yún](https://store.arduino.cc/usa/arduino-yun)/[Yún Mini](https://store.arduino.cc/usa/arduino-yun-mini)/[Yún Shield](https://store.arduino.cc/usa/arduino-yun-shield) boards.
+### A bluetooh and wi-fi connected red light/green light handler.
+> A traffic light script for the [ESP32](https://www.espressif.com/en/products/socs/esp32) boards.
 
 #### Features
 
@@ -9,10 +9,12 @@
   - Traffic simulator
   - Random light selection
   - Flash red/yellow/green/all
-  - Stop/End
-  - Off
+  - Shuffle between all commands
+  - Stop/End/Off
 - Automatically turns lights off if they've been on too long
-- Controls accessible over wi-fi via HTTP request
+- Controls accessible over:
+  - wi-fi via HTTP request
+  - Bluetooth
 - Maintains responsiveness by not using `delay()`
 
 ##### Language(s)
@@ -28,7 +30,7 @@
 ##### Instructions
 
 - Load into Arduino IDE of your preference
-- Select Arduino board
+- Select ESP32 board
 - Compile/Upload
 - Play with traffic
 
