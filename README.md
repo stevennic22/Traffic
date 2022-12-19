@@ -1,5 +1,5 @@
 # Traffic
-### A bluetooh and wi-fi connected red light/green light handler.
+### A bluetooth and wi-fi connected red light/green light handler.
 > A traffic light script for the [ESP32](https://www.espressif.com/en/products/socs/esp32) boards.
 
 #### Features
