@@ -163,7 +163,7 @@ void wParseCommand(char *cmd, String &msg, processID &ID, bool &firstRun, unsign
   }
 }
 
-void wWebResponse(WiFiClient &client, bool &redirect, processID pID, String msg) {
+void wWebResponse(WiFiClient &client, bool &redirect, processID &pID, String &msg) {
   if (redirect) { //Set redirect at HTTP header level
     client.println(F("HTTP/1.1 302 Found"));
     client.println(F("Location: /"));
