@@ -137,7 +137,7 @@ void lightController(PTracker &currentProcess) {
       }
 
       if (currentProcess.endTime == 0) {
-        currentProcess.endTime = millis() + random(2000,6000);
+        currentProcess.endTime = millis() + random(1500,6000);
 
         if (lState(CHECK_STATE, Red)) {
           lState(TURN_OFF, Gre);

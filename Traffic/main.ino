@@ -105,8 +105,8 @@ void setup() {
 void loop(){
   BLE.poll(); // Does the Blootueth stuff
 
-  // Ensure characteristic states match with reality ever half second
-  if ((millis() - btCharStateCheck) >= 500) {
+  // Ensure characteristic states match with reality ever quarter of a second
+  if ((millis() - btCharStateCheck) >= 250) {
     btUpdateBLEChar((int)curProc.ID, PIDChar);
     btUpdateBLEChar(lState(CHECK_STATE, Red), RLChar);
     btUpdateBLEChar(lState(CHECK_STATE, Yel), YLChar);
