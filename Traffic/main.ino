@@ -24,10 +24,10 @@ light Gre;
 // Init BLE service
 BLEService myService(MY_UUID("0000"));
 
-BLEByteCharacteristic PIDChar(MY_UUID("0001"), BLERead | BLEWrite | BLENotify);
-BLEByteCharacteristic RLChar(MY_UUID("0002"), BLERead | BLENotify);
-BLEByteCharacteristic YLChar(MY_UUID("0003"), BLERead | BLENotify);
-BLEByteCharacteristic GLChar(MY_UUID("0004"), BLERead | BLENotify);
+BLEByteCharacteristic PIDChar(MY_UUID("0001"), BLERead | BLEWrite | BLEWriteWithoutResponse | BLENotify);
+BLEByteCharacteristic RLChar(MY_UUID("0002"), BLERead | BLEWrite | BLEWriteWithoutResponse | BLENotify);
+BLEByteCharacteristic YLChar(MY_UUID("0003"), BLERead | BLEWrite | BLEWriteWithoutResponse | BLENotify);
+BLEByteCharacteristic GLChar(MY_UUID("0004"), BLERead | BLEWrite | BLEWriteWithoutResponse | BLENotify);
 
 // Init process tracker
 struct PTracker {
@@ -67,6 +67,7 @@ void setup() {
 
   BLE.setLocalName(bleName);
   BLE.setDeviceName(bleName);
+  Serial.print(F("Device name: "));
   Serial.println(bleName);
 
   BLE.setAdvertisedService(myService);
