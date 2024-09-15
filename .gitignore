@@ -1,7 +1,13 @@
 *.txt
-*.json
 *.DS_Store
 .vscode/
 *tmp
+
 secrets.h
 Traffic/*_main.ino
+
+*.json
+!package*.json
+
+node_modules
+dist/

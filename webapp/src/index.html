@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title><%= htmlWebpackPlugin.options.title %></title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        background-color: #eeeeee;
+        font-family: "barlow", sans-serif;
+        font-weight: 400;
+      }
+
+      /* Container for the two columns */
+      .container {
+        display: flex;
+        /* Allow for wrapping in smaller viewports */
+        flex-wrap: wrap;
+        gap: 20px;
+        padding: 20px;
+        box-sizing: border-box;
+      }
+
+      /* Left Column */
+      .left-column {
+        /* Take up remaining space in row */
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+
+      /* Right Column */
+      .right-column {
+        /* Take up remaining space in row */
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      /* SVG */
+      svg {
+        max-width: 100%;
+        height: auto;
+      }
+
+      /* Buttons/contents at the bottom */
+      .bottom-buttons {
+        margin-top: auto;
+        width: 50%;
+      }
+
+      .status {
+        display: flex;
+        justify-content: space-between;
+      }
+
+      button,
+      select {
+        font-size: 2vw;
+        font-family: "barlow", sans-serif;
+        width: 100%;
+        margin-top: 10%;
+      }
+
+      #setNewPID {
+        margin-top: 5%;
+      }
+
+      .toggle {
+        cursor: pointer;
+        display: inline-block;
+      }
+
+      .toggle-switch {
+        display: inline-block;
+        background: #ccc;
+        border-radius: 16px;
+        width: 58px;
+        height: 32px;
+        position: relative;
+        vertical-align: middle;
+        transition: background 0.25s;
+      }
+
+      .toggle-switch:before,
+      .toggle-switch:after {
+        content: "";
+      }
+
+      .toggle-switch:before {
+        display: block;
+        background: linear-gradient(to bottom, #fff 0%, #eee 100%);
+        border-radius: 50%;
+        box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25);
+        width: 24px;
+        height: 24px;
+        position: absolute;
+        top: 4px;
+        left: 4px;
+        transition: left 0.25s;
+      }
+
+      .toggle-checkbox:checked + .toggle-switch {
+        background: #56c080;
+      }
+
+      .toggle-checkbox:checked + .toggle-switch:before {
+        left: 30px;
+      }
+
+      .toggle-checkbox {
+        position: absolute;
+        visibility: hidden;
+      }
+
+      .toggle-label {
+        margin-left: 20px;
+        position: relative;
+        top: 2px;
+      }
+
+      /* Media query for single-column layout on smartphones */
+      @media (max-width: 1080px) {
+        .container {
+          /* Update the single column layout */
+          flex-direction: column-reverse;
+        }
+
+        button,
+        select,
+        .status,
+        label[for="allLightOverride"],
+        label[for="PidOverride"] {
+          font-size: 3vw;
+        }
+
+        button,
+        select {
+          padding: 15px;
+          margin-top: 5%;
+        }
+
+        svg {
+          padding-top: 15%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <noscript>
+      <strong
+        >We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work
+        properly without JavaScript enabled. Please enable it to continue.
+      </strong>
+    </noscript>
+    <div id="app"></div>
+  </body>
+</html>

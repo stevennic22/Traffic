@@ -34,5 +34,44 @@
 - Compile/Upload
 - Play with traffic
 
+## Web Bluetooth app
+> Built and intended to be deployed via a separate webserver
+
+> [!WARNING]
+> This does require additional enablement. This is largely available on Chromium-based browsers.
+> Additional details: https://developer.chrome.com/docs/capabilities/bluetooth
+
+> Can potentially be included as a js/index file to be served from an ESP32 if space is not an issue
+
+
+#### Features
+
+- Direct control of Traffic light via Bluetooth in browser
+
+- Enable/Disable commands noted for ESP32 project
+- Bluetooth connection updates process and enabled lights visually
+- Directly control individual lights
+  - Tapping/Clicking on a light will enable/disable it
+  - Toggles below process selection allow you to override all lights or process
+
+##### Instructions
+- Load `webapp` directory
+- Run `npm install`
+- To run local development application:
+  - Run `npm run dev` to start a webpack HTTPs server
+- To build JS file to be used elsewhere
+  - Run `npm run build`
+  - `app.js` and `index.html` files will be saved to `dist/` directory
+
+##### Language(s)
+
+- React/NodeJS/Javascript
+
+##### Depends
+
+| External Libraries | Version |
+| --------- | --------- |
+| NodeJS | v22.8.0 (tested) |
+
 ### License
 [License](LICENSE.md)
