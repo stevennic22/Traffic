@@ -74,7 +74,7 @@ void charToLower(char *cmd) {
   }
 }
 
-void wParseCommand(char *cmd, String &msg, processID &ID, bool &firstRun, unsigned long &endTime, unsigned long &timeOut) {
+void wParseCommand(char *cmd, String &msg, processID &ID, bool &firstRun, unsigned long &timeOut) {
     charToLower(cmd);
     if (debug) {
     Serial.print(F("Current cmd: "));

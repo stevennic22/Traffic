@@ -149,7 +149,7 @@ void loop(){
           }
 
           // Parse command and respond accordingly
-          wParseCommand(curConn.cmd, curConn.msg, curProc.ID, curProc.firstRun, curProc.endTime, curProc.timeOut);
+          wParseCommand(curConn.cmd, curConn.msg, curProc.ID, curProc.firstRun, curProc.timeOut);
           wWebResponse(client, curProc.redirect, curProc.ID, curConn.msg);
         }
       }
